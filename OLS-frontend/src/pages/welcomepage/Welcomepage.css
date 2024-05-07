@@ -1,0 +1,27 @@
+/* Home.css */
+.home-container {
+    padding: 20px;
+  }
+  
+  .book-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  /* BookCard.css */
+  .header-content{
+    min-height: 100vh;
+    background:  url("../../images/library-img.jpg") center/cover no-repeat;
+    flex-direction: column;
+}
+.header-title{
+    font-size: 4.2rem;
+}
+.header-text{
+    margin-top: -1.8rem;
+    margin-bottom: 2.8rem;
+    opacity: 1;
+    max-width: 770px;
+    
+}

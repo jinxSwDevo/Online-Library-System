@@ -1,0 +1,32 @@
+.form-container {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .avatar {
+    margin: 8px;
+    background-color: rgb(223, 1, 1); /* Example of custom avatar styling */
+  }
+  
+  .input-field {
+    margin-bottom: 10px;
+  }
+  
+
+
+  
+  .link-container {
+    margin-top: 20px;
+  }
+
+  .background{
+    color: black;
+  }
+
+ .z{
+    background-color: #9f3c15; /* Change the background color to orange */
+    color: white;
+  }
+  
