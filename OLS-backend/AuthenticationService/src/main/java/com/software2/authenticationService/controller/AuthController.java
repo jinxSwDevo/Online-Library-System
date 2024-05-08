@@ -58,6 +58,6 @@ public class AuthController {
             return ResponseEntity.badRequest().body("password not correct");
         }
         LoginResponse response = authService.provideAuth(login.getEmail(), login.getPassword());
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().header("Authorization", response.getJwt()).body(response);
     }
 }
