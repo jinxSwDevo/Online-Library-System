@@ -3,6 +3,8 @@ package com.software2.bookService.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.software2.bookService.dto.BookRequest;
 import com.software2.bookService.entity.Book;
@@ -21,84 +24,70 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 
-@Controller
-@RequestMapping("/books")
+@RestController
+@RequestMapping("/api/books")
 public class BookController {
 
     @Autowired
     BookService bookService;
 
     @GetMapping({"","/"})
-    public String viewBookList(Model model) {
+    public ResponseEntity<List<Book>> viewBookList() {
         List<Book> books = bookService.getAllBooks();
-        model.addAttribute("books", books);
-        return "user/list-books";
+        return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
-    @GetMapping("admin/list")
-    public String viewBookListAdmin(Model model) {
-        List<Book> books = bookService.getAllBooks();
-        model.addAttribute("books", books);
-        return "admin/list-books";
-    }
-    
     @GetMapping("/{id}")
-    public String showBookDetails(
-        @PathVariable(name = "id") Long id,
-        Model model) {
-        
+    public ResponseEntity<?> showBookDetails(@PathVariable(name = "id") Long id,Model model) {
         Book currentBook = bookService.getBookById(id);
         model.addAttribute("book", currentBook);
-        return "/user/book-page";
+        return ResponseEntity.ok().body(currentBook);
     }
 
-    @GetMapping("/updatePage/{id}")
-    public String showUpdatePage(
-        @PathVariable(name="id") Long id,
-        Model model) {
-        
-        Book currentBook = bookService.getBookById(id);
-        model.addAttribute("book", currentBook);
-        return "/admin/update-book";
+    @PostMapping("/add")
+    public ResponseEntity<?> saveBook(@RequestBody BookRequest book , Model model) {
+        System.out.println(book);
+        Book newBook = bookService.addBook(book);
+        return ResponseEntity.ok().body(newBook);
     }
 
-    @PostMapping("/update/{id}")
-    public String updateBook(@RequestBody BookRequest book ,@PathVariable(name="id") Long id, Model model) {
-        Book newBook = bookService.updateBook(book , id);
-        if(newBook == null){
-            model.addAttribute("error", "sorry update unsucess");
-            return "redirect:/admin/update-book";
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateBook(@RequestBody BookRequest book ,@PathVariable(name="id") Long id) {
+        try{
+            Book newBook = bookService.updateBook(book , id);
+            return ResponseEntity.ok().body(newBook);
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body("error to find book " + e);
         }
-        model.addAttribute("success", "update sucess");
-        return "redirect:/admin/list-book";
-    }
-
-    @GetMapping("/addPage")
-    public String showaddBookPage(Model model) {
-        model.addAttribute("book", new Book());
-        return "/admin/add-book";
     }
 
     @DeleteMapping("/remove/{id}")
-	public String removeBook(
-            @PathVariable(name = "id") Long id,
-            Model model) {
-
+	public ResponseEntity<?> removeBook(@PathVariable(name = "id") Long id,Model model) {
 		Book book = bookService.getBookById(id);
 		if(book == null) {
-            model.addAttribute("error", "error in database , cant find book");
-            return "redirect:/admin/list-books";
+            return ResponseEntity.badRequest().body("book not founded");
 		}
         bookService.deleteBook(id);
-        model.addAttribute("success", "book has been deleted");
-		return "redirect:/admin/list-books";
+		return ResponseEntity.ok().body("book deleted succesfuly");
 	}
 
-    @PostMapping("/save")
-    public String saveBook(@RequestBody BookRequest book , Model model) {
-        bookService.addBook(book);
-        return "/admin/list-books";
+    @GetMapping("/filter")
+    public ResponseEntity<List<Book>> filterBooks(@RequestParam(required = false) String author, @RequestParam(required = false) Integer rackNumber) {
+        List<Book> books;
+        if (author != null && rackNumber != null) {
+            // Filter by both author and shelfNumber
+            books = bookService.filterBooksByAuthorAndRackNumber(author, rackNumber);
+        } else if (author != null) {
+            // Filter only by author
+            books= bookService.filterBooksByAuthor(author);
+        } else if (rackNumber != null) {
+            // Filter only by shelfNumber
+            books = bookService.filterBooksByRackNumber(rackNumber);
+        } else {
+            // No filter parameters provided, return all books
+            books = bookService.getAllBooks();
+        }
+        return ResponseEntity.ok().body(books);
     }
-    
-    
+
 }

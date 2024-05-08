@@ -14,7 +14,8 @@ const Users = () => {
   // Function to fetch users data from the API
   const fetchData = async () => {
     try {
-      const response = await fetch("http://localhost:8081/api/users");
+      const response = await fetch("http://localhost:8080/api/users");
+      console.log(response)
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       }

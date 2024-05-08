@@ -15,7 +15,13 @@ public interface BookService {
 
     Book addBook(BookRequest book);
 
-    Book updateBook(BookRequest book , Long id);
+    Book updateBook(BookRequest book , Long id) throws Exception;
 
     void deleteBook(Long userId);
+
+    List<Book> filterBooksByAuthor(String author);
+
+    List<Book> filterBooksByRackNumber(Integer rackNumber);
+
+    List<Book> filterBooksByAuthorAndRackNumber(String author, Integer rackNumber);
 }

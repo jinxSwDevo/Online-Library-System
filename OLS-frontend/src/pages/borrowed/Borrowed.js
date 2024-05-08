@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import "./users.css";
 import Navbar from "../../components/Navbar";
 import Swal from 'sweetalert2'
-
 function getFilenameFromPath(path) {
   const parts = path.split("T");
   return parts[0];
@@ -17,7 +16,9 @@ const Borrowed = () => {
 
   const fetchBorrowedBooks = async () => {
     try {
-      const response = await fetch("https://localhost:8080/borrow/");
+      const response = await fetch("http://localhost:8083/api/borrow/requests",{
+        method: "GET"
+      });
       console.log(response)
       if (!response.ok) {
         throw new Error("Failed to fetch borrowed books");
@@ -35,7 +36,7 @@ const Borrowed = () => {
       showCancelButton : true
     }).then((data)=>{
       if (data.isConfirmed) {
-        fetch(`https://localhost:7007/api/borrowbook/${book}`,{
+        fetch(`https://localhost:8083/api/borrowbook/${book}`,{
           method : "DELETE"
         })
         .then((res) => res.json())

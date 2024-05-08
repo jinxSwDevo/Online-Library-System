@@ -16,11 +16,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Book")
+@Table(name = "books")
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "book_id")
     private Long id;
     @Column(nullable = false)
     private Integer rackNumber;
@@ -31,9 +30,5 @@ public class Book {
     @Column(nullable = false)
     private String author;
     @Column(nullable = false)
-    private int nocopies;
-    @Column(nullable = false)
-    private boolean availibilty;
-    // @Column(nullable = false)
-    // private String image;
+    private int noCopies;
 }

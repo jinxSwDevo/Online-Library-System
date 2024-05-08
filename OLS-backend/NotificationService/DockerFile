@@ -1,7 +1,10 @@
 FROM openjdk:17
 
-COPY ./target/NotificationService-0.0.1-SNAPSHOT.jar app.jar
+COPY ./target/NotificationService-0.0.1-SNAPSHOT.jar /app.jar/NotificationService.jar
+
+WORKDIR /app
 
 EXPOSE 8082
 
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+# ENTRYPOINT ["java", "-jar", "/app.jar"]
+CMD ["java", "-jar", "NotificationService.jar"]

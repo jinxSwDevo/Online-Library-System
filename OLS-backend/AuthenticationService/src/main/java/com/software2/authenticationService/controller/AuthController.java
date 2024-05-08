@@ -2,16 +2,20 @@ package com.software2.authenticationService.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 import com.software2.authenticationService.dto.LoginDto;
+import com.software2.authenticationService.dto.LoginResponse;
 import com.software2.authenticationService.dto.RegisterDto;
 import com.software2.authenticationService.entity.User;
 import com.software2.authenticationService.service.AuthService;
@@ -21,7 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 
-@Controller
+@RestController
 @RequestMapping("/auth")
 public class AuthController {
 
@@ -33,51 +37,27 @@ public class AuthController {
     PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public String registerUser(
-        @ModelAttribute(name = "newUser") RegisterDto register,
-        RedirectAttributes redirect
-    ){
+    public ResponseEntity<?> registerUser(@RequestBody RegisterDto register){
         if(authService.isUserExist(register.getEmail())){
-            redirect.addFlashAttribute("emailExist","email is already exist");
-            return "redirect:/register?emailExist";
+           return ResponseEntity.badRequest().body("email is already exist");
         }
         User user = authService.saveUser(register);
-
         if(user == null){
-            redirect.addFlashAttribute("serverError","sorry its probrlem in server.");
-            return "redirect:/register?serverError";
+            return ResponseEntity.badRequest().body("sorry its probrlem in server.");
         }
-        return "redirect:/register-success";
+        return ResponseEntity.ok().body(user);
     }
 
     @PostMapping("/login")
-    public String login( 
-                    @ModelAttribute(name = "userInter") LoginDto login,
-                    RedirectAttributes redirect,
-                    HttpServletRequest request) {
-
-                        System.out.println("in login");
+    public ResponseEntity<?> login( @RequestBody LoginDto login) throws Exception {
         UserDetails user = userService.loadUserByUsername(login.getEmail());
         if(user == null){
-            redirect.addFlashAttribute("userNotFound","user not founded");
-            return "redirect:/login?userNotFound";
-        }else{
-            if(!passwordEncoder.matches(login.getPassword(), user.getPassword())){
-                redirect.addFlashAttribute("passwordWrong","password is wrong , please try again!");
-                return "redirect:/login?passwordWrong";
-            }
+            return ResponseEntity.badRequest().body("email not founded");
         }
-        
-        String jwt = authService.provideToken(login.getEmail(), login.getPassword());
-        if(jwt != null){
-            authService.setJwtHeader(jwt);
-            HttpSession session= request.getSession();
-			session.setAttribute("email", user.getUsername());
-
-            return "redirect:/";
+        if(!passwordEncoder.matches(login.getPassword(), user.getPassword())){
+            return ResponseEntity.badRequest().body("password not correct");
         }
-        
-        return "redirect:/login";
+        LoginResponse response = authService.provideAuth(login.getEmail(), login.getPassword());
+        return ResponseEntity.ok().body(response);
     }
-    
 }

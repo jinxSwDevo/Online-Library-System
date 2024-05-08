@@ -22,29 +22,26 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const requestData = {
-      email : formData.get('email'),
-      password : formData.get('password')
-    }
+    const email = formData.get('email');
+    const password = formData.get('password');
 
     try {
-      const response = await fetch(`http://localhost:8080/auth/login`, {
-        method: 'POST',
+      const response = await fetch(`http://localhost:8081/api/users/login/${email}/${password}`, {
+        method: 'GET',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestData)
       });
-      
-      if (!response.ok) { 
+
+      if (!response.ok) {
         throw new Error('Network response was not ok');
       }
 
       const responseData = await response.json();
-      console.log(responseData);
+
       // Redirect based on user role after successful login
       if (!responseData.success) {
-        if (!responseData.LIBRARIAN) {
+        if (!responseData.admin) {
           if(responseData.acceptable){
           Swal.fire({
             title: ` Welcome ${responseData.name} `
@@ -56,7 +53,7 @@ const Login = () => {
             });
           } // Redirect to admin page if not an admin
          }else {
-          if (responseData.LIBRARIAN&&responseData.acceptable) {
+          if (responseData.admin&&responseData.acceptable) {
           Swal.fire({
             title: `Welcome admin ` 
           });
@@ -64,7 +61,7 @@ const Login = () => {
         }}
       } else {
         Swal.fire({
-          title: `Login failed: Invalid credentials`
+          title: `  Login failed: Invalid credentials`
         });
       }
     } catch (error) {

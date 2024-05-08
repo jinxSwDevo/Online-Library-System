@@ -21,13 +21,9 @@ public class BookServiceImp implements BookService{
         Book newBook = new Book();
         newBook.setAuthor(book.getAuthor());
         newBook.setTitle(book.getTitle());
-        newBook.setNocopies(book.getNocopies());
-        if(book.getNocopies() <= 0){
-            newBook.setAvailibilty(false);
-        }
-        newBook.setAvailibilty(false);
+        newBook.setNoCopies(book.getNoCopies());
         newBook.setRackNumber(book.getRackNumber());
-        newBook.setISBN(book.getISBN());
+        newBook.setISBN(book.getIsbn());
         return bookRepository.save(newBook);
     }
 
@@ -37,12 +33,11 @@ public class BookServiceImp implements BookService{
     }
 
     @Override
-    public Book updateBook(BookRequest book , Long id) {
-        Optional<Book> optionalExistingBook = bookRepository.findById(id);
-        if (optionalExistingBook.isPresent()) {
-            Book existingBook = optionalExistingBook.get();
+    public Book updateBook(BookRequest book , Long id) throws Exception{
+        Book existingBook = bookRepository.findById(id).orElse(null);
+        if (existingBook != null) {
             existingBook.setRackNumber(book.getRackNumber());
-            existingBook.setISBN(book.getISBN());
+            existingBook.setISBN(book.getIsbn());
             existingBook.setTitle(book.getTitle());
             existingBook.setAuthor(book.getAuthor());
             return bookRepository.save(existingBook);
@@ -73,5 +68,17 @@ public class BookServiceImp implements BookService{
         if(Book.isPresent())
             return Book.get();
         return null;
+    }
+
+    public List<Book> filterBooksByAuthor(String author) {
+        return bookRepository.findByAuthorContainingIgnoreCase(author);
+    }
+
+    public List<Book> filterBooksByRackNumber(Integer rackNumber) {
+        return bookRepository.findByRackNumber(rackNumber);
+    }
+
+    public List<Book> filterBooksByAuthorAndRackNumber(String author, Integer rackNumber) {
+        return bookRepository.findByAuthorContainingIgnoreCaseAndRackNumber(author, rackNumber);
     }
 }

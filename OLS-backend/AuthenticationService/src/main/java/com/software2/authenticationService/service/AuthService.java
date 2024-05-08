@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.software2.authenticationService.dto.LoginResponse;
 import com.software2.authenticationService.dto.RegisterDto;
 import com.software2.authenticationService.entity.Role;
 import com.software2.authenticationService.entity.User;
@@ -29,15 +30,19 @@ public class AuthService {
     JwtService jwtService;
 
 
-    public String provideToken(String email , String password){
-        System.out.println("in auth with email "+email);
-        Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-        SecurityContextHolder.getContext().setAuthentication(auth);
+    public LoginResponse provideAuth(String email , String password) throws Exception{
+        try{
+            Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+            SecurityContextHolder.getContext().setAuthentication(auth);
 
-        
-        UserDetails userDetails = (UserDetails)auth.getPrincipal();
-        String jwt = jwtService.generateJwtToken(userDetails);
-        return jwt;
+            User user = (User)auth.getPrincipal();
+            String jwt = jwtService.generateJwtToken(user);
+            Role role = user.getRole();
+
+            return new LoginResponse(jwt , user , role);
+        }catch(Exception e){
+            throw new Exception("wrong in fetch user");
+        }
     }
     
     public void setJwtHeader(String jwt) {

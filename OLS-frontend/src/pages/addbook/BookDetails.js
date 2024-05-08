@@ -37,7 +37,7 @@ function BookDetails() {
   useEffect(() => {
     const fetchBookDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/books/book/${BookID}`);
+        const response = await fetch(`http://localhost:8081/api/books/${BookID}`);
         if (!response.ok) {
           throw new Error('Failed to fetch book details');
         }

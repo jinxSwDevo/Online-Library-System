@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 public class BookRequest {
 
     private Integer rackNumber;
-    private String ISBN;
+    private String isbn;
     private String title;
     private String author;
-    private int nocopies;
+    private int noCopies;
 }

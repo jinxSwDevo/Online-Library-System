@@ -9,28 +9,23 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-@Getter
-@Setter
 
+@Data
 @NoArgsConstructor
-
 @AllArgsConstructor
 @Entity
-@Table(name = "BorrowedBooks")
+@Table(name = "borroewdbooks_table")
 public class BorrowedBook  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
     @ManyToOne
     private User user;
-
     @ManyToOne
     private Book book;
-    
     private LocalDate borrowDate;
     private LocalDate returnDate;
+    private RequestStatus status;
 }

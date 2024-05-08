@@ -23,8 +23,7 @@ const Register = () => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const firstName = formData.get('first_name');
-    const lastName = formData.get('last_name');
+    const name = formData.get('name');
     const email = formData.get('email');
     const password = formData.get('password');
 
@@ -48,18 +47,16 @@ const Register = () => {
       return;
     }
 
-    const data = { firstName ,lastName, email, password };
+    const data = { name, email, password };
 
     try {
-      const response = await fetch('http://localhost:8080/auth/register', {
+      const response = await fetch('http://localhost:8081/api/users/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
-      console.log(response);
-      console.log(response.body);
 
       if (!response.ok) {
         const errorMessage = `HTTP Error! Status: ${response.status}`;
@@ -79,7 +76,6 @@ const Register = () => {
         }
       });
     } catch (error) {
-      console.log(error)
       // Show error message using SweetAlert2
       Swal.fire({
         icon: 'error',
@@ -110,21 +106,10 @@ const Register = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
-                  name="first_name"
+                  name="name"
                   fullWidth
-                  id="first_name"
-                  label="First Name"
-                  autoFocus
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="last_name"
-                  fullWidth
-                  id="last_name"
-                  label="Last Name"
+                  id="name"
+                  label="Name"
                   autoFocus
                   required
                 />

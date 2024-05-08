@@ -1,0 +1,101 @@
+version: "3"
+services:
+  book-app:
+    container_name: book-Service-Container
+    build: ./BookService
+    ports:
+      - "8080:8080"
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: loma
+      MYSQL_PASSWORD: loma
+      MYSQL_PORT: 3306
+    volumes:
+      - book-data:/app/data
+    networks:
+      - library-network
+
+  Notification-app:
+    container_name: Notification-Service-Container
+    build: ./NotificationService
+    ports:
+      - "8082:8082"
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: loma
+      MYSQL_PASSWORD: loma
+      MYSQL_PORT: 3306
+    volumes:
+      - notification-data:/app/data
+    networks:
+      - library-network
+
+  Report-app:
+    container_name: Report-Service-Container
+    build: ./ReportService
+    ports:
+      - "8083:8083"
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: loma
+      MYSQL_PASSWORD: loma
+      MYSQL_PORT: 3306
+    volumes:
+      - report-data:/app/data
+    networks:
+      - library-network
+
+  SerchService-app:  
+    container_name: SerchService-Container
+    build: ./SerchService 
+    ports:
+      - "8084:8084"
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: loma
+      MYSQL_PASSWORD: loma
+      MYSQL_PORT: 3306
+    volumes:
+      - searchbook-data:/app/data
+    networks:
+      - library-network
+
+  User-app:
+    container_name: User-Container
+    build: ./UserService
+    ports:
+      - "8085:8085"
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: loma
+      MYSQL_PASSWORD: loma
+      MYSQL_PORT: 3306
+    volumes:
+      - user-data:/app/data
+    networks:
+      - library-network
+
+  mysqldb:
+    container_name: mysqldb
+    image: mysql:8.0
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3030:3306"
+    environment:
+      MYSQL_DATABASE: Projectlibrary
+      MYSQL_ROOT_PASSWORD: loma
+    networks:
+      - library-network
+
+volumes:
+  mysql-data:
+  book-data:
+  notification-data:
+  report-data:
+  searchbook-data:
+  user-data:
+
+networks:
+  library-network:
+    driver: bridge

@@ -1,7 +1,7 @@
 FROM openjdk:17
 
-COPY ./target/ReportService-0.0.1-SNAPSHOT.jar app.jar
+COPY ./target/NotificationService-0.0.1-SNAPSHOT.jar app.jar
 
-EXPOSE 8083
+EXPOSE 8082
 
 ENTRYPOINT ["java", "-jar", "/app.jar"]
